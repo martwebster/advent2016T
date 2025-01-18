@@ -1,9 +1,9 @@
 import '../utility/extensions';
 import { test, describe, expect } from 'vitest'
 import { readTestData } from '../utility/fileHelper';
-import { exampleFunction } from './day1';
+import { exampleFunction } from './dayx';
 
-describe('day 1 - part1', () => {
+describe('day X - part1', () => {
     test('sample', () => {
         expect(exampleFunction('1')).toBe(1);
     })
