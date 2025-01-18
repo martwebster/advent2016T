@@ -25,33 +25,42 @@ export namespace Dir {
       }
    }
 
-   export const moveForward = (pos: Pos, dir: Dir): Pos =>{
-      switch (dir) {
-         case Dir.South: {
-            return {
-               x: pos.x,
-               y: pos.y +1
+   export const moveForward = (pos: Pos, dir: Dir, distance: number = 1): Pos =>{
+
+      var currentPos = pos;
+      for (let _ = 0; _ < distance; _++) {
+         switch (dir) {
+            case Dir.South: {
+               currentPos = {
+                  x: currentPos.x,
+                  y: currentPos.y + 1
+               }
+               break;
             }
-         }
-         case Dir.North: {
-            return {
-               x: pos.x,
-               y: pos.y-1
+            case Dir.North: {
+               currentPos = {
+                  x: currentPos.x,
+                  y: currentPos.y - 1
+               }
+               break;
             }
-         }
-         case Dir.East: {
-            return {
-               x: pos.x+1,
-               y: pos.y,
+            case Dir.East: {
+               currentPos = {
+                  x: currentPos.x + 1,
+                  y: currentPos.y,
+               }
+               break;
             }
-         }
-         case Dir.West: {
-            return {
-               x: pos.x-1,
-               y: pos.y,
+            case Dir.West: {
+               currentPos = {
+                  x: currentPos.x - 1,
+                  y: currentPos.y,
+               }
+               break;
             }
          }
       }
+      return currentPos;
    }
 
 }

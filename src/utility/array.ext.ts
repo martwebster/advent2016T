@@ -73,6 +73,8 @@ declare global {
         insertAt(val: number, index:number): Array<T>
 
         splitAt(ranges: number[][]): Array<Array<T>>
+
+        chunk(size: number): Array<Array<T>>
     }
 }
 
@@ -270,4 +272,12 @@ Array.prototype.splitAt = function (ranges: number[][]): Array<Array<unknown>>{
         results.push(rangeBit)
     }
     return results
+}
+
+Array.prototype.chunk = function (size: number): Array<Array<unknown>> {
+    const result: Array<Array<unknown>> = [];
+    for (let i = 0; i < this.length; i = i+size) {
+        result.push( this.slice(i, i+size))
+    }
+    return result
 }

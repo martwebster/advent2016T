@@ -33,6 +33,7 @@ export namespace Position {
       }
       return adjacent
    }
+   export const Zero : Pos = { x: 0, y: 0 }
 }
 
 

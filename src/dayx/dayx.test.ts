@@ -9,7 +9,7 @@ describe('day X - part1', () => {
     })
 
     test('part1', () => {
-        const data = readTestData('./src/dayx/part1.txt');
+        const data = readTestData('./src/dayx/input.txt');
         const sum = data.map(line => exampleFunction(line)).sum();
         expect(sum).toBe(6);
     })
