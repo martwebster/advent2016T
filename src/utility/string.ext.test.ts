@@ -138,3 +138,11 @@ describe('String.setCharAt',()=>{
         expect("0123456".setCharAt(1,"--")).toBe("0--23456");
     })
 });
+
+describe('String.substringAllBetween',()=>{
+    test('pass', () => {
+        expect("[1][2]".substringAllBetween("[","]")).toStrictEqual(["1","2"])
+        expect("[abc][def]".substringAllBetween("[","]")).toStrictEqual(["abc","def"])
+        expect("aaa[abc]xxx[def]ddd".substringAllBetween("[","]")).toStrictEqual(["abc","def"])
+    })
+});

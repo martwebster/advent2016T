@@ -9,6 +9,7 @@ declare global {
         substringAfterLast(value: string): string|undefined;
         substringBeforeLast(value: string): string|undefined;
         substringBetweenLast(first: string, second: string): string|undefined;
+        substringAllBetween(first: string, second: string): string[];
 
         isDigit(): boolean;
         /**
@@ -114,4 +115,26 @@ String.prototype.setCharAt = function (index: number, char: string): string{
         return this.toString();
     }
     return this.substring(0, index) + char + this.substring(index + 1)
+}
+
+String.prototype.substringAllBetween = function (first: string, second: string): string[]{
+    const result : string[] = [];
+    let between = false;
+    var current = "";
+    for (let i = 0; i < this.length; i++) {
+        if ( this.substring(i).startsWith(first)){
+            between = true
+            i = i+first.length-1
+            current = ""
+        } else if ( this.substring(i).startsWith(second)){
+            between = false;
+            result.push(current)
+            i = i+second.length-1
+        } else{
+            if (between){
+                current = current + this.charAt(i)
+            }
+        }
+    }
+    return result
 }
