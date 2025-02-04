@@ -11,6 +11,11 @@ export namespace Position {
    export const downRight: Movement = (pos: Pos): Pos => ({ x: pos.x + 1, y: pos.y + 1 })
 
    export const toString = (pos: Pos): string => pos.x + ":" + pos.y
+   export const fromString=(string: string): Pos =>
+       ({
+          x: Number(string.split(":")[0]),
+          y: Number(string.split(":")[1]),
+       })
 
    export const find = (positions: Pos[], pos: Pos): Pos|undefined =>{
       return positions.find(it => it.x == pos.x && it.y == pos.y)

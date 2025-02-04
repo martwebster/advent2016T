@@ -1,7 +1,7 @@
 import '../utility/extensions';
 import { test, describe, expect } from 'vitest'
 import { readTestData } from '../utility/fileHelper';
-import {buildRegisters, copy, decrement, exampleFunction, increment, runProgram} from './day12';
+import {buildRegisters, copy, decrement, increment, runProgram} from './day12';
 
 describe('day 12 - part1', () => {
     test('simple commands', () => {
