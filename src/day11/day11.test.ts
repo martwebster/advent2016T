@@ -1,95 +1,91 @@
 import '../utility/extensions';
 import { test, describe, expect } from 'vitest'
-import {displayOption, Floor, move, moveAll, Option} from "./day11";
+import {
+    displayOption,
+    move,
+    moveAll,
+    moveUpAndDown,
+    initialiseOption
+} from "./day11";
 
 describe('day 11 - part1', () => {
     test('sample', () => {
-        const floors : Floor[] = [];
-        floors.push({
-            contents: ["HM", "LM"],
-        })
-        floors.push({
-            contents: ["HG"],
-        })
-        floors.push({
-            contents: ["LG"],
-        })
-        floors.push({
-            contents: [],
-        })
-
-        const option = {
-            elevator: 0,
-            floors,
-        } as Option;
-
-        displayOption(option);
-        // var options = move(option, true)
-        // options.forEach( displayOption)
-        //
-        // options = options.flatMap( it => move(it, true))
-        // options.forEach( displayOption)
-        //
-        // options = options.flatMap( it => move(it, false))
-        // options.forEach( displayOption)
-        // console.log("----4---- ", options.length)
-        // options = options.flatMap( it => move(it, false))
-        // options.forEach( displayOption)
-        // console.log("----5---- ", options.length)
-        // options = options.flatMap( it => move(it, true))
-        // options.forEach( displayOption)
-        //
-        // console.log("----6---- ", options.length)
-        // options = options.flatMap( it => move(it, true))
-        // options.forEach( displayOption)
-        // elevator, can carry
-        // one chip,
-        // one gen,
-        // one chip, one gen
-        // two chips
-        // two gen
-
-        expect(moveAll(option,4)).toBe(11)
-        //F3 .  .  .  .  .
-        //F2 .  .  .  LG .
-        //F1 .  HG .  .  .
-        //F0 E  .  HM .  LM
-
-        // up only
-        // first call, either one or two chips
+        const floors : string[][] = []
+        floors.push(["HM", "LM"])
+        floors.push(["HG"])
+        floors.push(["LG"])
+        floors.push([])
 
 
+        const dictionary = ["HG","HM","LG","LM"]
+        const optionString = initialiseOption(floors,dictionary);
+        console.log("---1---");
+        let options = moveUpAndDown(optionString, dictionary);
+        options.forEach(it =>  displayOption(it, dictionary))
 
+        console.log("---2---");
+        options = moveUpAndDown(options[0], dictionary)
+        options.forEach(it =>  displayOption(it, dictionary))
+
+        console.log("---3---");
+        options = moveUpAndDown(options[1], dictionary)
+        options.forEach(it =>  displayOption(it, dictionary))
+
+        console.log("---4---");
+        options = move(options[6], false, dictionary)
+        console.log("---4a---");
+        options.forEach(it =>  displayOption(it, dictionary))
+
+        console.log("---5---");
+        options = moveUpAndDown(options[0], dictionary)
+        options.forEach(it =>  displayOption(it, dictionary))
+
+        console.log("---6---");
+        options = moveUpAndDown(options[1], dictionary)
+        options.forEach(it =>  displayOption(it, dictionary))
+
+        console.log("---7---");
+        options = moveUpAndDown(options[1], dictionary)
+        options.forEach(it =>  displayOption(it, dictionary))
+
+        console.log("---8---");
+        options = moveUpAndDown(options[3], dictionary)
+        options.forEach(it =>  displayOption(it, dictionary))
+
+        console.log("---9---");
+        options = moveUpAndDown(options[0], dictionary)
+        options.forEach(it =>  displayOption(it, dictionary))
+
+        console.log("---10---");
+        options = moveUpAndDown(options[0], dictionary)
+        options.forEach(it =>  displayOption(it, dictionary))
+
+        console.log("---11---");
+        options = moveUpAndDown(options[2], dictionary)
+        options.forEach(it =>  displayOption(it, dictionary))
+
+        expect(moveAll(floors)).toBe(11)
     })
 
     test('part1', () => {
 
-        const floors : Floor[] = [];
-        floors.push({
-            contents: ["TG", "TM","PLG", "SG"],
-        })
-        floors.push({
-            contents: ["PLM", "SM"],
-        })
-        floors.push({
-            contents: ["PRG", "PRM", "RG", "RM"],
-        })
-        floors.push({
-            contents: [],
-        })
+        const floors : string[][] = [];
+        floors.push(["TG", "TM","PLG", "SG"])
+        floors.push(["PLM", "SM"])
+        floors.push(["PRG", "PRM", "RG", "RM"])
+        floors.push([])
 
-        const option = {
-            elevator: 0,
-            floors,
-        } as Option;
+        expect(moveAll(floors)).toBe(31)
+    })
 
-        displayOption(option);
+    test('part2', () => {
 
-        expect(moveAll(option,10)).toBe(7)
+        const floors : string[][] = [];
+        floors.push(["TG", "TM","PLG", "SG", "EG","EM","DG","DM"])
+        floors.push(["PLM", "SM"])
+        floors.push(["PRG", "PRM", "RG", "RM"])
+        floors.push([])
 
-// F0 = TG, TM, PLG, SG
-// F1 = PLM, SM
-// F2 = PRG, PRM, RG, RM.
-        // F3 =
+        expect(moveAll(floors)).toBe(55)
     })
 })

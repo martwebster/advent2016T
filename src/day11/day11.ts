@@ -1,132 +1,152 @@
-export interface Floor {
-    contents: string[],
-}
 
-export interface Option {
-    elevator: number,
-    floors: Floor[]
-}
+/*
+ This uses a breadth first search, with a heavy pruning algorithm. This function is bloated to make pruning easy, with output for manual pruning
+ */
+export const moveAll = (floors: string[][]): number | undefined => {
+    let lastPruneTime = Date.now();
 
-export const isValid = (contents: string[]): boolean => {
+    const dictionary = buildDictionary(floors)
+    let options = [ initialiseOption(floors,dictionary) ];
+    let steps = 0;
+    let previous: string[] = [];
+    while (options.length > 0) {
+        options = options.flatMap(it => moveUpAndDown(it, dictionary))
+        options = Array.from(new Set(options)) // removes duplicates
+        options = options.filter(it => !previous.includes(it))
+        previous.push(...options)
 
-    // generator on the same floor with a chip not powered
-    const chips = contents.filter(it => it.endsWith("M")).map(it=> it.substring(0, it.length-1))
-    const generators = contents.filter(it => it.endsWith("G")).map(it=> it.substring(0, it.length-1))
+        if (options.length > 5000) {
+            let cutoff = calculateCutOff(steps);
+            // stats before pruning
+            const max3 = options.maxOf(it => it.split("").countOf(it => it == "3"))
+            const min3 = options.minOf(it => it.split("").countOf(it => it == "3"))
 
-    const chipsNotPowered = chips.filter( chip => !generators.includes(chip));
+            const beforeOpts = options.length;
+            options = options.filter(it => it.split("").countOf(it => it == "3") > cutoff)
+            const afterOpts = options.length;
 
-    if (chipsNotPowered.length > 0 && generators.length>0){
-        return false
+            const beforePrev = previous.length
+            previous = previous.filter(it => it.split("").countOf(it => it == "3") > cutoff)
+            const afterPrev = previous.length
+
+            const diffFromLastPrune = Date.now() - lastPruneTime;
+            console.log(`Prune at ${steps}: ${beforeOpts} -> ${afterOpts} : ${beforePrev} -> ${afterPrev} (${diffFromLastPrune}) : 3s - ${min3} - ${max3} : cutoff =${cutoff}`)
+            lastPruneTime = Date.now()
+        }
+        steps++;
+        if (options.find(it => it.substring(1).split("").countOf(it=> it=="3")==dictionary.length)) {
+            return steps;
+        }
     }
-    return true;
+    return undefined
 }
 
-export const moveUpAndDown = (option: Option): Option[] =>{
-    return [ ...move(option, true ), ...move(option, false ) ]
+export const buildDictionary = (floors: string[][]): string[] => {
+    const items = new Set<string>();
+    for (const item of floors) {
+        item.forEach(it => items.add(it))
+    }
+    return Array.from(items).sort((a, b) => a.localeCompare(b))
 }
 
-export const removeDuplicates = <T>(items: T[]): T[] =>{
-    const result : T[] = [];
-    var objects: string[] = [];
-    for (const item of items) {
-        const obj = JSON.stringify(item)
-        if (!objects.includes(obj)){
-            objects.push(obj);
-            result.push(item);
+
+export const initialiseOption = (floors: string[][], dictionary: string[]): string => {
+    let result = "0";
+    for (const item of dictionary) {
+        if (floors[0].includes(item)) {
+            result = result + 0
+        } else if (floors[1].includes(item)) {
+            result = result + 1
+        } else if (floors[2].includes(item)) {
+            result = result + 2
+        } else if (floors[3].includes(item)) {
+            result = result + 3
         }
     }
     return result
 }
 
-export const prune = (options: Option[]): Option[] => {
-    return removeDuplicates(options);
-}
+const calculateCutOff = (steps: number) => {
+    let cutoff = 4;
 
-const score = (option: Option): number =>{
-    const score = option.floors.map( (item: Floor, index: number) => (index+1)*10 * (item.contents.length))
-    return score.sum()
-}
-
-export const moveAll = (initial: Option, length: number): number =>{
-    var options = [initial]
-    var steps = 0;
-    while (options.length > 0){
-       options = options.flatMap( it => moveUpAndDown(it))
-       options = prune(options)
-       const scores = options.map(score)
-       if (scores.length > 5000){
-           const minScores = scores.min();
-           const maxScores = scores.max();
-           const cutOff = (maxScores - minScores)/2 + minScores;
-           //const cutOff = maxScores-50;
-           options = options.filter( it=> score(it)>= cutOff)
-       }
-       steps++;
-       if (options.find( it=> it.floors[3].contents.length==length)){
-           return steps;
-       }
-
+    if (steps > 44) {
+        cutoff = 10
+    } else if (steps > 41) {
+        cutoff = 9
+    } else if (steps > 34) {
+        cutoff = 8
+    } else if (steps > 25) {
+        cutoff = 7
     }
-    return -1
+    return cutoff;
 }
 
-export const move = (option: Option, up: boolean): Option[]=> {
-    const currentFloor = option.floors[option.elevator]
+export const moveUpAndDown = (option: string, dictionary: string[]): string[] => {
+    return [...move(option, true, dictionary), ...move(option, false, dictionary)]
+}
 
-    var targetFloorIndex = option.elevator;
-    targetFloorIndex = up? targetFloorIndex+1: targetFloorIndex-1;
-    if (targetFloorIndex<0 || targetFloorIndex == option.floors.length){
+export const move = (option: string, up: boolean, dictionary: string[]): string[] => {
+    let currentFloor = option.charAt(0)
+    let targetFloorIndex = Number(currentFloor);
+    targetFloorIndex = up ? targetFloorIndex + 1 : targetFloorIndex - 1;
+    if (targetFloorIndex < 0 || targetFloorIndex == 4) {
         return []
     }
-    const targetFloor = option.floors[targetFloorIndex]
 
-    const result : Option[] = []
+    const result: string[] = []
 
-    for (let itemIndex = 0; itemIndex < currentFloor.contents.length; itemIndex++) {
-        // second item
-        for (let secondItemIndex = itemIndex; secondItemIndex < currentFloor.contents.length; secondItemIndex++) {
-           // which could be itself
-           const firstItem = currentFloor.contents[itemIndex]
-           const secondItem = currentFloor.contents[secondItemIndex]
+    const currentFloorIndexes = option.substring(1).indicesOf(currentFloor);
 
-           var currentFloorContent = currentFloor.contents.removeAtIndex(secondItemIndex)
-           var targetFloorContent = [...targetFloor.contents, secondItem];
-           if (itemIndex !== secondItemIndex) {
-               targetFloorContent = [...targetFloorContent, firstItem];
-               currentFloorContent = currentFloorContent.removeAtIndex(itemIndex);
-           }
-           if (isValid(currentFloorContent) && isValid(targetFloorContent)) {
-                const newOption = {
-                    elevator: targetFloorIndex,
-                    floors: option.floors.map((item) => ({
-                        contents: [...item.contents]
-                    })),
-                }
-                newOption.floors[option.elevator].contents = currentFloorContent.sortAscending();
-                newOption.floors[targetFloorIndex].contents = targetFloorContent.sortAscending();
+    // select upto 2 items to move. It could select the same item twice, which effectively means that a single item is being moved
+    for (let itemIndex = 0; itemIndex < currentFloorIndexes.length; itemIndex++) {
+        for (let secondItemIndex = itemIndex; secondItemIndex < currentFloorIndexes.length; secondItemIndex++) {
+            let newOption = option.setCharAt(0, targetFloorIndex + "");
+
+            newOption = newOption.setCharAt(currentFloorIndexes[itemIndex] + 1, targetFloorIndex + "")
+            newOption = newOption.setCharAt(currentFloorIndexes[secondItemIndex] + 1, targetFloorIndex + "")
+
+            if (isValidOption(newOption, dictionary)) {
                 result.push(newOption)
-           }
+            }
         }
     }
     return result
 }
 
-export const displayOption = (option: Option) => {
-    console.log("---")
-    for (let i = option.floors.length-1; i > -1 ; i--) {
-        var ele = i == option.elevator? "E": " ";
-        console.log(`F${i} ${ele} : ${option.floors[i].contents.join(", ")} `);
-    }
+export const isValidOption = (option: string, dictionary: string[]): boolean => {
+    return  getItemsByFloor(option, dictionary).every(isValidFloor)
 }
 
+export const isValidFloor = (contents: string[]): boolean => {
+    const generators = contents.
+    filter(it => it.endsWith("G")).
+    map(it => it.substring(0, it.length - 1))
 
-// F3 =
-// F2 = PRG, PRM, RG, RM.
-// F1 = PLM, SM
-// F0 = TG, TM, PLG, SG
+    const chipsNotPowered = contents.
+    filter(it => it.endsWith("M")).
+    map(it => it.substring(0, it.length - 1)).
+    filter(chip => !generators.includes(chip));
 
-//---Step 1-----
-// F3  =
-// F2  = PRG, PRM, RG, RM.
-// F1* = PLM, SM, TM
-// F0  = TG,PLG, SG
+    return !(chipsNotPowered.length > 0 && generators.length > 0);
+}
+
+export const getItemsByFloor = (option: string, dictionary: string[]): string[][] => {
+    const itemsFloors = option.substring(1)
+    const result: string[][] = [[], [], [], []]
+    for (let index = 0; index < dictionary.length; index++) {
+        const item = dictionary[index];
+        const floorItem = Number(itemsFloors.charAt(index))
+        result[floorItem].push(item)
+    }
+    return result;
+}
+
+export const displayOption = (option: string, dictionary: string[]) => {
+    const floors = getItemsByFloor(option, dictionary)
+    const currentFloor = Number(option.charAt(0))
+    console.log("---")
+    for (let floor = floors.length - 1; floor > -1; floor--) {
+        const elevator = floor == currentFloor ? "E" : " ";
+        console.log(`F${floor} ${elevator} : ${floors[floor].join(", ")} `);
+    }
+}
