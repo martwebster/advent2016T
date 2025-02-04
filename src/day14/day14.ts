@@ -1,10 +1,5 @@
 import {Md5} from 'ts-md5'
 
-
-export const generate = (salt: string, index: number): string => {
-    return Md5.hashStr(salt + index.toString())
-}
-
 export const generateKeys = (salt: string, stretch: boolean = false): number => {
     const possibles = new Map<number, string>();
     const keys : number[] = []
@@ -12,7 +7,7 @@ export const generateKeys = (salt: string, stretch: boolean = false): number => 
     let complete = false;
     let index = 0;
     while (!complete) {
-        let hash = generate(salt, index);
+        let hash = generateHash(salt, index);
         if (stretch) {
             hash = stretchHash(hash);
         }
@@ -39,6 +34,19 @@ export const generateKeys = (salt: string, stretch: boolean = false): number => 
     return keys.sortAscending()[63]
 }
 
+// part 1
+export const generateHash = (salt: string, index: number): string => {
+    return Md5.hashStr(salt + index.toString())
+}
+
+// part 2
+export const stretchHash = (hash: string): string => {
+    for (let i = 0; i < 2016; i++) {
+        hash = Md5.hashStr(hash)
+    }
+    return hash;
+}
+
 export const searchForTriplet = (line: string) => {
     let prev = "";
     for (const char of line) {
@@ -57,7 +65,6 @@ export const searchForTriplet = (line: string) => {
 
 export const getFives = (line: string): string[] => {
     const fives = new Set<string>();
-
     let prev = "";
     for (const char of line) {
         if (prev.length == 0) {
@@ -75,11 +82,3 @@ export const getFives = (line: string): string[] => {
     }
     return Array.from(fives);
 }
-
-export const stretchHash = (hash: string): string => {
-    for (let i = 0; i < 2016; i++) {
-        hash = Md5.hashStr(hash)
-    }
-    return hash;
-}
-

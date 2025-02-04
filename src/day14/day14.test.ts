@@ -1,10 +1,10 @@
 import '../utility/extensions';
 import { test, describe, expect } from 'vitest'
-import {generate, generateKeys, searchForTriplet} from './day14';
+import {generateHash, generateKeys, searchForTriplet} from './day14';
 
 describe('day 14', () => {
     test('sample', () => {
-        expect (searchForTriplet(generate("abc", 22728))).toBe("ccc")
+        expect (searchForTriplet(generateHash("abc", 22728))).toBe("ccc")
 
         expect (searchForTriplet("0034e0923cc38887a57bd7b1d4f953df")).toStrictEqual("888")
         expect(generateKeys("abc")).toBe(22728)
