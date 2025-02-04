@@ -10,12 +10,12 @@ import {
 
 describe('day 11 - part1', () => {
     test('sample', () => {
-        const floors : string[][] = []
-        floors.push(["HM", "LM"])
-        floors.push(["HG"])
-        floors.push(["LG"])
-        floors.push([])
-
+        const floors = [
+            ["HM", "LM"],
+            ["HG"],
+            ["LG"],
+            []
+        ]
 
         const dictionary = ["HG","HM","LG","LM"]
         const optionString = initialiseOption(floors,dictionary);
@@ -69,22 +69,22 @@ describe('day 11 - part1', () => {
 
     test('part1', () => {
 
-        const floors : string[][] = [];
-        floors.push(["TG", "TM","PLG", "SG"])
-        floors.push(["PLM", "SM"])
-        floors.push(["PRG", "PRM", "RG", "RM"])
-        floors.push([])
+        const floors = [
+            ["TG", "TM", "PLG", "SG"],
+            ["PLM", "SM"],
+            ["PRG", "PRM", "RG", "RM"],
+            []
+        ]
 
         expect(moveAll(floors)).toBe(31)
     })
 
     test('part2', () => {
-
-        const floors : string[][] = [];
-        floors.push(["TG", "TM","PLG", "SG", "EG","EM","DG","DM"])
-        floors.push(["PLM", "SM"])
-        floors.push(["PRG", "PRM", "RG", "RM"])
-        floors.push([])
+        const floors = [
+            ["TG", "TM", "PLG", "SG", "EG", "EM", "DG", "DM"], // 4 more added to this line
+            ["PLM", "SM"],
+            ["PRG", "PRM", "RG", "RM"],
+            []]
 
         expect(moveAll(floors)).toBe(55)
     })
