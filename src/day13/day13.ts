@@ -1,19 +1,16 @@
 import {Position} from "../utility/position";
 
-export const exampleFunction = (line: string): number | undefined => {
-    return Number(line);
-}
-
-export const isSpace = (pos : Pos, designer: number): boolean =>{
-    const {x, y} = pos;
+export const isSpace = ( {x, y} : Pos, designer: number): boolean =>{
     let val = (x * x) + (3 * x) + (2 * x * y) + y + (y * y);
     val = val + designer;
     const binary = val.toString(2);
-    const ones = binary.split("").countOf(it => it == "1");
-    return ones % 2 == 0;
-
+    const onesCount = binary.split("").countOf(it => it == "1");
+    return onesCount % 2 == 0;
 }
 
+/**
+ * Used to visually check isSpace looks good.
+ */
 export const displayGrid = (maxX: number, maxY: number, designer: number) => {
     for (let y = 0; y <= maxY; y++) {
         let line = "";
@@ -25,6 +22,10 @@ export const displayGrid = (maxX: number, maxY: number, designer: number) => {
     }
 }
 
+/**
+ * Breadth first search with keeping a track of previous positions
+ * Part 2 passes through the max steps with a wild to
+ */
 export const navigateTo= (to: Pos, designer: number, maxSteps? :number) : { steps: number; distinct: number } => {
     const previous = new Set<string>();
 
@@ -44,16 +45,6 @@ export const navigateTo= (to: Pos, designer: number, maxSteps? :number) : { step
         }
     }
     return { steps, distinct: previous.size};
-}
-
-export const canMove = (pos: Pos, previous: Set<string>, designer: number) => {
-    if (pos.x< 0 || pos.y<0){
-        return false;
-    }
-    if (previous.has(Position.toString(pos))){
-        return false;
-    }
-    return isSpace(pos, designer);
 }
 
 export const navigate = (pos: string, previous: Set<string>, designer: number): string[] =>{
@@ -77,4 +68,14 @@ export const navigate = (pos: string, previous: Set<string>, designer: number): 
         result.push(Position.toString(right))
     }
     return result
+}
+
+export const canMove = (pos: Pos, previous: Set<string>, designer: number) => {
+    if (pos.x< 0 || pos.y<0){
+        return false;
+    }
+    if (previous.has(Position.toString(pos))){
+        return false;
+    }
+    return isSpace(pos, designer);
 }
