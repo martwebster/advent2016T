@@ -3,7 +3,7 @@ import { test, describe, expect } from 'vitest'
 import { readTestData } from '../utility/fileHelper';
 import { exampleFunction } from './dayx';
 
-describe('day 10 - part1', () => {
+describe('day x', () => {
     test('sample', () => {
         expect(exampleFunction('1')).toBe(1);
     })
