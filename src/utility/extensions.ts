@@ -1,6 +1,8 @@
 import './array.ext';
 import './string.ext';
 import './map.ext';
+import './number.ext';
+
 
 export {};
 

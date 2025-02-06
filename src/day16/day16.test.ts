@@ -1,6 +1,6 @@
 import '../utility/extensions';
 import { test, describe, expect } from 'vitest'
-import {checkSum, dragonCurve, fillToLength} from './dayx';
+import {checkSum, dragonCurve, fillToLength} from './day16';
 
 describe('day 16', () => {
 
