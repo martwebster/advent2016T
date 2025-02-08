@@ -47,28 +47,29 @@ export const move = (passcode: string, path: string): string[] => {
     return result
 }
 
+const atEnd = (path: string) : boolean => Position.toString(getPosition(path)) == "3:3"
+
+// Part 1
 export const getShortestPath = (passcode: string): string | undefined => {
     let paths = [""];
     while (paths.length > 0) {
         paths = paths.flatMap(path => move(passcode, path))
-        if (paths.find(it => Position.toString(getPosition(it)) == "3:3")) {
-            return paths.find(it => Position.toString(getPosition(it)) == "3:3")!
+        if (paths.find(atEnd)) {
+            return paths.find(atEnd)!
         }
     }
     return undefined
 }
 
 export const getLongestPath = (passcode: string): number => {
-    let steps = 0;
     let paths = [""];
     let longest = 0;
 
     while (paths.length > 0) {
         paths = paths.flatMap(path => move(passcode, path))
-        steps += 1;
-        const pathsAtEnd = paths.filter(it => Position.toString(getPosition(it)) == "3:3")
+        const pathsAtEnd = paths.filter(atEnd)
         if (pathsAtEnd.length > 0) {
-            longest = steps;
+            longest = pathsAtEnd[0].length;
         }
         paths = paths.filter(it => !pathsAtEnd.includes(it))
     }
