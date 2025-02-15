@@ -146,3 +146,67 @@ describe('String.substringAllBetween',()=>{
         expect("aaa[abc]xxx[def]ddd".substringAllBetween("[","]")).toStrictEqual(["abc","def"])
     })
 });
+
+describe('String.swap',()=>{
+    test('pass', () => {
+        expect("123".swap(0,2)).toStrictEqual("321")
+        expect("123".swap(0,0)).toStrictEqual("123")
+
+        expect( () => {"123".swap(0,3)}).toThrowError("Invalid swap positions from: 0 to: 3. String length is 3 characters")
+    })
+});
+
+describe('String.swapLetters',()=>{
+    test('pass', () => {
+        expect("123".swapLetters("1","3")).toStrictEqual("321")
+        expect("123".swapLetters("A","B")).toStrictEqual("123")
+        expect("1111".swapLetters("1","3")).toStrictEqual("3333")
+    })
+});
+
+describe('String.rotateLeft',()=>{
+    test('pass', () => {
+        expect("abcd".rotateLeft(0)).toStrictEqual("abcd")
+        expect("abcd".rotateLeft(1)).toStrictEqual("bcda")
+        expect("abcd".rotateLeft(2)).toStrictEqual("cdab")
+        expect("abcd".rotateLeft(3)).toStrictEqual("dabc")
+        expect("abcd".rotateLeft(4)).toStrictEqual("abcd")
+
+        expect("abcd".rotateLeft(5)).toStrictEqual("bcda")
+        expect("abcd".rotateLeft(4000)).toStrictEqual("abcd")
+    })
+});
+
+describe('String.reverseBetween',()=>{
+    test('pass', () => {
+        expect("0123456789".reverseBetween(1,3)).toStrictEqual("0321456789")
+        expect("0123456789".reverseBetween(0,9)).toStrictEqual("9876543210")
+        expect("0123456789".reverseBetween(0,0)).toStrictEqual("0123456789")
+    })
+});
+
+describe('String.deleteChar',()=>{
+    test('pass', () => {
+        expect("0123456789".deleteChar(0)).toStrictEqual("123456789")
+        expect("0123456789".deleteChar(1)).toStrictEqual("023456789")
+        expect("0123456789".deleteChar(9)).toStrictEqual("012345678")
+
+        expect( () => {"0123456789".deleteChar(10)}).toThrowError("Invalid delete position 10. String length is 10 characters")
+    })
+});
+
+describe('String.insertCharAt',()=>{
+    test('pass', () => {
+        expect("0123456789".insertCharAt(0,"A")).toStrictEqual("A0123456789")
+        expect("0123456789".insertCharAt(1,"A")).toStrictEqual("0A123456789")
+        expect("0123456789".insertCharAt(9,"A")).toStrictEqual("012345678A9")
+        expect("0123456789".insertCharAt(10,"A")).toStrictEqual("0123456789A")
+    })
+});
+
+describe('String.moveChar',()=>{
+    test('pass', () => {
+        expect("0123456789".moveChar(0,1)).toStrictEqual("1023456789")
+        expect("0123456789".moveChar(0,2)).toStrictEqual("1203456789")
+    })
+});

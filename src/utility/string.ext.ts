@@ -26,6 +26,25 @@ declare global {
         indicesOf(item: string): number[]
         splitAt(ranges: number[][]): Array<string>
         setCharAt(index: number, char: string): string
+        swap (from: number, to: number): string
+        swapLetters (from: string, to:string): string
+        rotateLeft (rotation: number): string
+        rotateRight (rotation: number): string
+        reverseBetween (from: number, to: number): string
+
+        /**
+         * Delete character at specified position
+         */
+        deleteChar(from : number): string
+
+        /**
+         * Insert character at the specified position
+         */
+        insertCharAt(to: number, value: string): string
+        /**
+        * Move position from to position to means that the letter which is at index from should be removed from the string, then inserted such that it ends up at index to.
+        */
+        moveChar(from: number, to: number): string
     }
 }
 
@@ -137,4 +156,81 @@ String.prototype.substringAllBetween = function (first: string, second: string):
         }
     }
     return result
+}
+
+String.prototype.swap = function (from: number, to:number) {
+    if (from >= this.length || to >= this.length) {
+        throw Error(`Invalid swap positions from: ${from} to: ${to}. String length is ${this.length} characters`);
+    }
+    const bits = this.split("");
+    const temp = bits[to];
+    bits[to] = bits[from];
+    bits[from] = temp;
+    return bits.join("")
+}
+
+String.prototype.swapLetters = function (from: string, to: string) {
+    return this
+        .split("")
+        .map( it => {
+            if (it==from){
+                return to;
+            } else if (it == to){
+                return from;
+            }
+            return it;
+        })
+        .join("")
+}
+
+String.prototype.rotateLeft = function (rotation: number): string{
+    var mapped = this.split("").map( (it: string, index: number) => ({
+        pos: index,
+        content: it
+    }))
+    mapped.forEach( it => it.pos =  (it.pos - rotation) % this.length )
+    mapped.forEach( it => {
+        if (it.pos<0){
+            it.pos = this.length +it.pos
+        }
+    })
+    mapped = mapped.sort( (a,b) => a.pos - b.pos)
+    return mapped.map(it => it.content).join("")
+}
+
+String.prototype.rotateRight = function (rotation: number): string{
+    let mapped = this.split("").map((it: string, index: number) => ({
+        pos: index,
+        content: it
+    }));
+    mapped.forEach( it => it.pos =  (it.pos + rotation) % this.length )
+    mapped = mapped.sort( (a,b) => a.pos - b.pos)
+    return mapped.map(it => it.content).join("")
+}
+
+String.prototype.reverseBetween = function(from: number, to: number): string{
+    if (from >= this.length || to >= this.length) {
+        throw Error(`Invalid reverse positions from: ${from} to: ${to}. String length is ${this.length} characters`);
+    }
+    return this.substring(0, from) + this.substring(from, to+1).reverse() + this.substring(to+1)
+}
+
+String.prototype.deleteChar = function(from : number): string{
+    if (from >= this.length) {
+        throw Error(`Invalid delete position 10. String length is ${this.length} characters`);
+    }
+    let result = "";
+    if (from>0){
+        result = this.substring(0, from);
+    }
+    result = result + this.substring(from+1)
+    return result
+}
+String.prototype.insertCharAt = function(to: number, value: string): string{
+    return this.substring(0, to) + value + this.substring(to)
+}
+String.prototype.moveChar = function (from: number, to: number): string{
+    var toMove = this.charAt(from);
+    var result = this.deleteChar(from)
+    return result.insertCharAt(to, toMove)
 }
