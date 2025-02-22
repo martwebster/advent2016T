@@ -75,6 +75,8 @@ declare global {
         splitAt(ranges: number[][]): Array<Array<T>>
 
         chunk(size: number): Array<Array<T>>
+
+        removeDuplicates(): Array<T>
     }
 }
 
@@ -280,4 +282,11 @@ Array.prototype.chunk = function (size: number): Array<Array<unknown>> {
         result.push( this.slice(i, i+size))
     }
     return result
+}
+
+Array.prototype.removeDuplicates = function (): Array<unknown> {
+    // Move to array
+    const set = new Set<any>();
+    this.forEach( it=> set.add(it));
+    return Array.from(set)
 }

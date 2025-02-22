@@ -51,7 +51,7 @@ export const runProgram = (program: string[], ignitionValue?:number): number =>{
         } else if (parts[0] == "inc"){
             increment(registers, parts[1]);
             pos += 1;
-        } else {
+        } else { //jmp
             const val = registers.get(parts[1]);
             if (val ==0){
                 pos += 1;
